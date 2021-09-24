@@ -37,7 +37,7 @@ public class Pong_Test extends Application
     private Rectangle player2Paddle = new Rectangle(PADDLE_W, PADDLE_H);
 
     // Line Background //
-    private Line lineVrt = new Line(WIDTH / 2, 0, WIDTH / 2, HEIGHT);
+    private Line lineVrt = new Line((WIDTH / 2.0), 0, (WIDTH / 2.0), HEIGHT);
     private Line lineHrz = new Line(0, 90 - BALL_RADIUS, WIDTH, 90 - BALL_RADIUS);
 
     private Timeline timeline = new Timeline();
@@ -76,15 +76,49 @@ public class Pong_Test extends Application
             ball.setTranslateX(ball.getTranslateX() + 5 * directX);
             ball.setTranslateY(ball.getTranslateY() + 5 * directY);
 
+            ballBorders();
+            playerBorders();
+
         });
 
         timeline.getKeyFrames().add(frame);
         timeline.setCycleCount(Timeline.INDEFINITE);
+        gameStart();
 
         /// Add all to pane ///
         root.getChildren().addAll(ball,player1Paddle,player2Paddle,
                 lineHrz, lineVrt, player1ScoreText, player2ScoreText);
         return root;
+    }
+
+    //// Ball Borders ////
+    void ballBorders()
+    {
+        if (ball.getTranslateY() == 100)
+        {
+            directY = 1;
+        }
+        if (ball.getTranslateY() == HEIGHT - BALL_RADIUS)
+        {
+            directY = -1;
+        }
+        if (ball.getTranslateX() == 0)
+        {
+            directX = 1;
+        }
+        if (ball.getTranslateX() == WIDTH)
+        {
+            directX = -1;
+        }
+    }
+
+    ////// Player Borders /////
+    void playerBorders()
+    {
+        if (player1Paddle.getTranslateY() - 5 >= 100)
+        {
+            player1Paddle.setTranslateY(player1Paddle.getTranslateY() - 5);
+        }
     }
 
     ///// Text ////
@@ -104,13 +138,30 @@ public class Pong_Test extends Application
         return paddle;
     }
 
+    void gameStart()
+    {
+        ball.setTranslateX((WIDTH / 2.0) + 100);
+        ball.setTranslateY((HEIGHT / 2.0) + 100);
+        timeline.play();
+    }
+
     @Override
     public void start(Stage primaryStage)
     {
         Scene scene = new Scene(createContent());
+
+        scene.setOnKeyPressed(event ->
+        {
+            switch (event.getCode())
+            {
+                case W:
+                    player1Paddle.setTranslateY(player1Paddle.getTranslateY() - 10);
+                case S:
+                    player1Paddle.setTranslateY(player1Paddle.getTranslateY() + 10);
+            }
+        });
         primaryStage.setScene(scene);
         primaryStage.show();
-        timeline.play();
     }
 
     public static void main(String[] args) {
