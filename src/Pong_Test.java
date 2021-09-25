@@ -15,21 +15,22 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.util.Duration;
 
+import java.util.Random;
+
 public class Pong_Test extends Application
 {
     // Variables //
     int player1Score = 0, player2Score = 0,
-        time = 0,
         directX = 1, directY = 1;
-    Text player1ScoreText, player2ScoreText,
-         timeText;
+    Text player1ScoreText, player2ScoreText;
 
     ///// Screen Values /////
     final int WIDTH = 800, HEIGHT = 600;
 
     /// Ball and Paddle Values ///
     final int BALL_RADIUS = 10,
-              PADDLE_W = 20, PADDLE_H = 100;
+              PADDLE_W = 20,
+              PADDLE_H = 100;
 
     ////// Create Ball and Paddles //////
     private Circle ball = new Circle(BALL_RADIUS);
@@ -41,8 +42,12 @@ public class Pong_Test extends Application
     private Line lineHrz = new Line(0, 100, WIDTH,
             100);
 
+    //// Timeline and run check ////
     private Timeline timeline = new Timeline();
     private boolean running = true;
+
+    Color WHITE = Color.WHITE;
+    Random random = new Random();
 
     ////////// Game Content //////////
     private Parent createContent()
@@ -60,9 +65,9 @@ public class Pong_Test extends Application
         player2ScoreText = texts(450, 50, player2Score);
 
         // set the ball and line color
-        ball.setFill(Color.WHITE);
-        lineVrt.setStroke(Color.WHITE);
-        lineHrz.setStroke(Color.WHITE);
+        ball.setFill(WHITE);
+        lineVrt.setStroke(WHITE);
+        lineHrz.setStroke(WHITE);
 
         //// Set background Color ////
         root.setBackground(new Background(new BackgroundFill
@@ -79,9 +84,7 @@ public class Pong_Test extends Application
 
             ballBorders();
             paddleBorders();
-            playerBorders();
-
-
+            updateScore();
         });
 
         timeline.getKeyFrames().add(frame);
@@ -92,6 +95,12 @@ public class Pong_Test extends Application
         root.getChildren().addAll(ball,player1Paddle,player2Paddle,
                 lineHrz, lineVrt, player1ScoreText, player2ScoreText);
         return root;
+    }
+
+    void updateScore()
+    {
+        player1ScoreText.setText("Score: " + player1Score);
+        player2ScoreText.setText("Score: " + player2Score);
     }
 
     //// Ball Borders ////
@@ -107,19 +116,30 @@ public class Pong_Test extends Application
         }
         if (ball.getTranslateX() == 0)
         {
-            directX = 1;
+            gameStart();
+            player2Score = player2Score + 1;
+            direction();
         }
         if (ball.getTranslateX() == WIDTH)
+        {
+            gameStart();
+            player1Score = player1Score + 1;
+            direction();
+        }
+    }
+
+    void direction()
+    {
+        int number = random.nextInt(2);
+        if (number == 0)
+        {
+            directX = 1;
+        }
+        if (number == 1)
         {
             directX = -1;
         }
     }
-
-    ////// Player Borders /////
-    void playerBorders()
-    {
-    }
-
 
     ///// Paddle Borders /////
     void paddleBorders()
@@ -139,11 +159,11 @@ public class Pong_Test extends Application
 
     }
 
-    ///// Text ////
+    ///// Score Text ////
     Text texts(int x, int y, int score)
     {
         Text text = new Text(x, y, "Score: " + score);
-        text.setFill(Color.WHITE);
+        text.setFill(WHITE);
         return text;
     }
 
@@ -152,13 +172,13 @@ public class Pong_Test extends Application
     {
         paddle.setTranslateX(x);        // X location
         paddle.setTranslateY(y);        // Y Location
-        paddle.setFill(Color.WHITE);    // Color
+        paddle.setFill(WHITE);    // Color
         return paddle;
     }
 
     void gameStart()
     {
-        ball.setTranslateX((WIDTH / 2.0) + 100);
+        ball.setTranslateX((WIDTH / 2.0));
         ball.setTranslateY((HEIGHT / 2.0) + 100);
         timeline.play();
     }
