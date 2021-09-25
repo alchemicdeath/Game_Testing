@@ -38,7 +38,8 @@ public class Pong_Test extends Application
 
     // Line Background //
     private Line lineVrt = new Line((WIDTH / 2.0), 0, (WIDTH / 2.0), HEIGHT);
-    private Line lineHrz = new Line(0, 90 - BALL_RADIUS, WIDTH, 90 - BALL_RADIUS);
+    private Line lineHrz = new Line(0, 100, WIDTH,
+            100);
 
     private Timeline timeline = new Timeline();
     private boolean running = true;
@@ -77,7 +78,9 @@ public class Pong_Test extends Application
             ball.setTranslateY(ball.getTranslateY() + 5 * directY);
 
             ballBorders();
+            paddleBorders();
             playerBorders();
+
 
         });
 
@@ -115,10 +118,25 @@ public class Pong_Test extends Application
     ////// Player Borders /////
     void playerBorders()
     {
-        if (player1Paddle.getTranslateY() - 5 >= 100)
+    }
+
+
+    ///// Paddle Borders /////
+    void paddleBorders()
+    {
+        ///// Player 1 /////
+        if (ball.getBoundsInParent().intersects(player1Paddle.getBoundsInParent()))
         {
-            player1Paddle.setTranslateY(player1Paddle.getTranslateY() - 5);
+            System.out.println("LEFT");
+            directX = 1;
         }
+        ///// Player 2 /////
+        if (ball.getBoundsInParent().intersects(player2Paddle.getBoundsInParent()))
+        {
+            System.out.println("LEFT");
+            directX = -1;
+        }
+
     }
 
     ///// Text ////
@@ -155,9 +173,11 @@ public class Pong_Test extends Application
             switch (event.getCode())
             {
                 case W:
-                    player1Paddle.setTranslateY(player1Paddle.getTranslateY() - 10);
+                    player1Paddle.setTranslateY(player1Paddle.getTranslateY() - 20);
+                    break;
                 case S:
-                    player1Paddle.setTranslateY(player1Paddle.getTranslateY() + 10);
+                    player1Paddle.setTranslateY(player1Paddle.getTranslateY() + 20);
+                    break;
             }
         });
         primaryStage.setScene(scene);
